@@ -1,0 +1,18 @@
+# Virtual environment
+advenv/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Official paper code
+paper_code/CycleNet/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
