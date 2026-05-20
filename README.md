@@ -15,13 +15,7 @@ For a summary of useful time series forecasting properties and CycleNet architec
 
 As a first reproducibility step. Before moving to the official benchmark datasets, we implemented a minimal version of CycleNet on a controlled synthetic time series. The goal of this experiment was not to reproduce the full paper yet, but to verify that the core mechanism of **Residual Cycle Forecasting** behaves as expected.
 
-We generated a synthetic periodic signal with a known cycle length:
-
-`\[
-p = 24
-\]`
-
-and trained two models:
+We generated a synthetic periodic signal with a known cycle length `p = 24` and trained two models:
 
 | Model | Description |
 |---|---|
@@ -30,7 +24,7 @@ and trained two models:
 
 The experiment was designed to test the main intuition of CycleNet: explicit cycle modeling should help when long-horizon forecasting depends on stable periodic structure.
 
-### What we tested
+##### What we tested
 
 We tested the linear model and the CycleNet-linear in two instances, one where the full cycle was shown in training, and one where only partial information was provided.
 
@@ -68,7 +62,7 @@ On terminal:
 ```bash
 mkdir paper_code
 cd paper_code
-git clone [https://github.com/ACAT-SCUT/CycleNet.git](https://github.com/ACAT-SCUT/CycleNet.git)
+git clone https://github.com/ACAT-SCUT/CycleNet.git
 ```
 
 3) then create the dataset folder inside the CycleNet repository and insert there the downloaded data. e.g. ../dataset/ETTh1.csv
@@ -92,15 +86,16 @@ This means that the model receives 96 past hourly observations for all 7 ETTh1 v
 
 We compared two models:
 
-Model	Description
-Linear	Direct channel-independent linear forecasting
-CycleNet-Linear	Linear backbone with learned recurrent cycle removal/addition
+| Model | Description |
+|---|---|
+| Linear | Direct channel-independent linear forecasting |
+| CycleNet-Linear | Linear backbone with learned recurrent cycle removal/addition |
 
 Both models use the same Linear temporal backbone. The only difference is that CycleNet-Linear explicitly models a learned periodic component.
 
 
 
-**Horizon Study:**
+##### Horizon Study
 
 We tested whether CycleNet becomes more useful as the prediction horizon increases.
 
@@ -114,7 +109,7 @@ We tested whether CycleNet becomes more useful as the prediction horizon increas
 
 CycleNet-Linear consistently improves over the Linear baseline. The improvement is modest, but it increases as the forecasting horizon becomes longer. This supports the main intuition of CycleNet: explicit periodic modeling becomes more useful when forecasting further into the future.
 
-Cycle Length Sensitivity
+##### Cycle Length Sensitivity
 
 We also tested different cycle lengths for `pred_len = 336`.
 
@@ -131,7 +126,7 @@ The best results are obtained with daily-scale cycles, especially `cycle_len = 2
 This suggests that CycleNet is sensitive to the chosen cycle length and works best when the assumed periodicity matches useful temporal structure in the data.
 
 
-## **MLP CycleNet vs MLP model:**
+##### MLP CycleNet vs MLP model
 
 In our reimplementation, CycleNet improves both Linear and MLP backbones, but the Linear backbone remains the most effective among the tested variants.
 
@@ -150,7 +145,7 @@ You can find the detailed implementation in the  [Cyclenet real benchmark notebo
 
 --- 
 
- ### **CycleiTransformer (Advanced)**
+#### 3. CycleiTransformer (Advanced)
 
 We also tested CycleNet with a stronger Transformer-style backbone. Since the repository provides `CycleiTransformer.py` but not a separate non-cycle `iTransformer.py`, we implemented an ablated version of the same architecture without cycle removal and cycle addition.
 
@@ -168,7 +163,7 @@ Results:
 
 CycleiTransformer improves over the no-cycle Transformer-style baseline on both MSE and MAE. The improvement is small, but it supports the paper's claim that the cycle mechanism can be integrated into stronger forecasting architectures.
 
-### Interpretation
+##### Interpretation
 
 Across both MLP and Transformer-style backbones, adding the learned cycle component improves performance, although the gains are smaller than in the Linear setting. In our experiments, CycleNet-Linear remains the strongest and most stable variant.
 
