@@ -217,7 +217,7 @@ The cycle module adds only $WD$ parameters (here, 168). Per-sample compute is $\
 
 \paragraph{Synthetic periodic signal.}
 A univariate series of length $T{=}2000$ with known cycle $p{=}24$, generated as
-$x_t = \sin(2\pi t/p) + 0.5\sin(4\pi t/p) + 0.25\cos(6\pi t/p) + \epsilon_t$, with $\epsilon_t \sim \mathcal{N}(0, 0.15^2)$. Chronological 80/20 train/test split; sliding windows; cycle index $=t \bmod p$.
+$x_t = \sin(2\pi t/p) + 0.0005\,t + \epsilon_t$, with $\epsilon_t \sim \mathcal{N}(0, 0.15^2)$. Chronological 80/20 train/test split; sliding windows; cycle index $=t \bmod p$.
 
 \paragraph{ETTh1.}
 $17{,}420$ hourly observations and $D{=}7$ variables \citep{lin2024cyclenet}. We use the multivariate setting (\texttt{features="M"}). The authors' loader applies the standard chronological split of $12/4/4$ months for train/validation/test, standardizes using training-split statistics only, builds sliding windows of length $L+H$, and computes the cycle index as $t \bmod W$. No observations are excluded beyond the windowing boundaries. The CSV is downloaded from the link in the authors' repository and placed under \texttt{paper\_code/CycleNet/dataset/ETTh1.csv}. With $L{=}96$, the resulting window counts are $\{8449,8353,8209\}$ train, $\{2785,2689,2545\}$ val, and $\{2785,2689,2545\}$ test for $H \in \{96,192,336\}$ respectively.

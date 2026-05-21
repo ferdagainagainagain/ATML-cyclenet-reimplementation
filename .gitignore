@@ -16,3 +16,14 @@ __pycache__/
 # macOS
 .DS_Store
 
+# latex files
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.blg
+*.bbl
+*.nav
