@@ -33,7 +33,7 @@ We reproduce and analyze CycleNet, a time series forecasting method that explici
 Long-term time series forecasting (LTSF) requires predicting a horizon of length $H$ from a look-back window of length $L$, often over thousands of steps. Many real-world series carry stable daily, weekly, or seasonal cycles, but deep models typically have to extract this structure implicitly from the input window. CycleNet \citep{lin2024cyclenet} instead models periodicity explicitly: a learnable recurrent cycle table is subtracted from the input, a simple backbone forecasts the residual, and the future cycle is added back. This report tests whether this Residual Cycle Forecasting (RCF) mechanism delivers its claimed benefits under a focused reimplementation.
 
 \subsection{Context and Problem Statement}
-Time series forecasting (TSF) is an essential tool across various domains, including weather forecasting, transportation, and energy management, where it facilitates early warnings and proactive planning. Within this field, accurate predictions over extended periods—referred to as Long-term Time Series Forecasting (LTSF)—are particularly valuable.\\
+Time series forecasting (TSF) is an essential tool across various domains, including weather forecasting, transportation, and energy management, where it facilitates early warnings and proactive planning. Within this field, accurate predictions over extended periods, referred to as Long-term Time Series Forecasting (LTSF), are particularly valuable.\\
 \\
 The fundamental principle that enables forecasting over these long horizons is the presence of inherent, stable periodicity within the data. Unlike short-term forecasting, which can often rely on recent temporal trends and means, long-term predictions depend heavily on understanding these long-range dependencies.\\
 \\
@@ -241,7 +241,7 @@ Synthetic $p$, $L$, $H$ & $24$, $\{6,24\}$, $192$ & Our stress test \\
 Batch size & $32$ & Our choice \\
 Optimizer (Linear/MLP) & Adam, lr $10^{-3}$ & Our choice \\
 Optimizer (Transformer) & AdamW, lr $10^{-4}$ & Stabilizes attention training \\
-Epochs & $20$ & Our choice \\
+Epochs & $20$ (ETTh1), $100$ (synthetic) & Our choice. \\
 Random seed & $42$ & Reproducibility \\
 Instance normalization & RevIN-style & Paper \\
 \bottomrule
@@ -250,11 +250,11 @@ Instance normalization & RevIN-style & Paper \\
 
 \subsection{Experimental setup}
 
-All models are trained with mini-batch SGD on the MSE objective; the target is the last $H$ steps returned by the loader, $Y = \texttt{batch\_y[:, -pred\_len:, :]}$. We report MSE and MAE on the test set, averaged over windows, prediction steps, and variables. Because ETTh1 is standardized with training-split statistics, ETTh1 metrics are on the standardized scale. Each configuration is run once with seed $42$ — we therefore report single-run results, not means over seeds, which is a limitation discussed in Section~\ref{sec:discussion}.
+All models are trained with mini-batch gradient descent (Adam for Linear/MLP, AdamW for Transformer) on the MSE objective; the target is the last $H$ steps returned by the loader, $Y = \texttt{batch\_y[:, -pred\_len:, :]}$. We report MSE and MAE on the test set, averaged over windows, prediction steps, and variables. Because ETTh1 is standardized with training-split statistics, ETTh1 metrics are on the standardized scale. Each configuration is run once with seed $42$; we therefore report single-run results, not means over seeds, which is a limitation discussed in Section~\ref{sec:discussion}.
 
 \subsection{Computational requirements}
 
-All runs were executed locally on a MacBook with Apple Silicon M4, using PyTorch with MPS acceleration where available. Linear and MLP runs take a few minutes each; Transformer-style runs take tens of minutes. No external cluster was used. Total cost is on the order of a few hours of laptop time. Exact per-run wall-clock times were not logged systematically.
+All runs were executed locally on a MacBook with Apple Silicon M4, using PyTorch with MPS acceleration where available. Linear and MLP runs take a few minutes each. No external cluster was used.
 
 \section{Results}
 \label{sec:results}
@@ -286,7 +286,7 @@ At $H{=}96$ our numbers closely match the paper's CycleNet/Linear+RevIN entry fo
 
 \subsubsection{Cycle length sensitivity (Claim 3)}
 
-Fixing $L{=}96$, $H{=}336$ and sweeping $W \in \{12,24,48,168\}$ (Table~\ref{tab:cycle}), daily-scale cycles ($W{=}24$ and $W{=}48$) perform best, while half-day ($W{=}12$) and weekly ($W{=}168$) cycles are clearly worse. This matches the paper's choice of $W{=}24$ for ETTh1 and confirms that the cycle table is not merely adding capacity: alignment with a meaningful periodicity is required.
+Fixing $L{=}96$, $H{=}336$ and sweeping $W \in \{12,24,48,168\}$ (Table~\ref{tab:cycle}), daily-scale cycles ($W{=}24$ and $W{=}48$) perform best, while half-day ($W{=}12$) and weekly ($W{=}168$) cycles are more subjective to noise. This matches the paper's choice of $W{=}24$ for ETTh1 and confirms that the cycle table is not merely adding capacity: alignment with a meaningful periodicity is required.
 
 \begin{table}[h]
 \centering
@@ -376,14 +376,14 @@ The reproduction has clear limits: single-seed runs instead of mean$\pm$std over
 RCF is a small, well-described mechanism, so the core reimplementation was direct. The authors' loader handled chronological splits, normalization, sliding windows, and cycle indexing consistently with the paper, which made the ETTh1 setup low-risk.
 
 \subsection{What was difficult}
-Aligning the cycle-table phase with the input and prediction windows: an off-by-phase index breaks the method silently and was the source of an early failure in the synthetic experiment. Building a fair Transformer-style no-cycle baseline was also non-trivial because the repository does not ship one. Single-seed runs and the absence of a hyperparameter search are limitations we accepted to keep the study focused.
+Aligning the cycle-table phase with the input and prediction windows: an off-by-phase index breaks the method silently and was the source of a non trivial to recognize error in the synthetic experiment. Building a fair Transformer-style no-cycle baseline was also non-trivial because the repository does not ship one. The absence of hyperparameter search are limitations we accepted to keep the study focused.
 
 \subsection{Communication with original authors}
 We did not contact the original authors. Our reimplementation relied on the paper and the public repository.
 
 \section{Conclusion}
 
-CycleNet's central idea — learn a recurrent periodic component, subtract it, forecast the residual, add it back — held up in our reimplementation. On ETTh1 with $L{=}96$, $H{=}96$, $W{=}24$, our CycleNet-Linear lands within $0.001$ MSE of the paper's reported number; gains over the Linear baseline grow with horizon, and cycle-length sensitivity behaves as expected. Stronger backbones with RCF also beat their no-cycle counterparts, although the simple CycleNet-Linear remains our strongest model. Natural extensions include multi-seed evaluation, the full ETT/Electricity/Traffic benchmark suite, and combining RCF with inter-channel modeling.
+CycleNet's central idea: learn a recurrent periodic component, subtract it, forecast the residual, add it back, held up in our reimplementation. On ETTh1 with $L{=}96$, $H{=}96$, $W{=}24$, our CycleNet-Linear lands within $0.001$ MSE of the paper's reported number; gains over the Linear baseline grow with horizon, and cycle-length sensitivity behaves as expected. Stronger backbones with RCF also beat their no-cycle counterparts, although the simple CycleNet-Linear remains our strongest model. Natural extensions include multi-seed evaluation, the full ETT/Electricity/Traffic benchmark suite, and combining RCF with inter-channel modeling.
 
 \section*{Member contributions}
 
