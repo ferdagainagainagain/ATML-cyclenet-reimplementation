@@ -259,7 +259,7 @@ All runs were executed locally on a MacBook with Apple Silicon M4, using PyTorch
 \section{Results}
 \label{sec:results}
 
-Our results support the four claims of Section~\ref{sec:claims}. On synthetic data, CycleNet-Linear matches the Linear baseline when a full cycle is visible and improves MSE by ${\sim}90\%$ when only a partial cycle is visible. On ETTh1, CycleNet-Linear consistently beats the Linear baseline across horizons, with relative MSE gains growing from 2.9\% to 4.2\% as $H$ grows from 96 to 336. Cycle-length sensitivity favors daily-scale $W$. RCF also helps the MLP and Transformer-style backbones, although the best overall model in our setup remains CycleNet-Linear.
+Our results support the four claims of Section~\ref{sec:claims}. On synthetic data, CycleNet-Linear matches the Linear baseline when a full cycle is visible and improves MSE by ${\sim}90\%$ when only a partial cycle is visible. On ETTh1, CycleNet-Linear consistently beats the Linear baseline across horizons, with relative MSE gains growing from 2.9\% to 4.5\% as $H$ grows from 96 to 336. Cycle-length sensitivity favors daily-scale $W$. RCF also helps the MLP and Transformer-style backbones, although the best overall model in our setup remains CycleNet-Linear.
 
 \subsection{Results reproducing the original paper}
 
@@ -277,7 +277,7 @@ $H$ & Linear MSE & CycleNet MSE & $\Delta$MSE & Linear MAE & CycleNet MAE \\
 \midrule
 96  & 0.3887 & 0.3774 & $-2.90\%$ & 0.3956 & 0.3916 \\
 192 & 0.4403 & 0.4246 & $-3.57\%$ & 0.4249 & 0.4188 \\
-336 & 0.4843 & 0.4639 & $-4.20\%$ & 0.4489 & 0.4399 \\
+336 & 0.4824 & 0.4609 & $-4.45\%$ & 0.4478 & 0.4371 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -297,8 +297,8 @@ Fixing $L{=}96$, $H{=}336$ and sweeping $W \in \{12,24,48,168\}$ (Table~\ref{tab
 $W$ & Interpretation & Test MSE & Test MAE \\
 \midrule
 12  & half-day  & 0.4742 & 0.4423 \\
-24  & daily     & \textbf{0.4627} & 0.4392 \\
-48  & two-day   & 0.4636 & \textbf{0.4391} \\
+24  & daily     & \textbf{0.4609} & \textbf{0.4371} \\
+48  & two-day   & 0.4636 & 0.4391 \\
 168 & weekly    & 0.4794 & 0.4476 \\
 \bottomrule
 \end{tabular}
@@ -316,8 +316,8 @@ We replace the Linear backbone with a two-layer MLP at $L{=}96$, $H{=}336$, $W{=
 \toprule
 Model & Test MSE & Test MAE \\
 \midrule
-Linear           & 0.4843 & 0.4489 \\
-CycleNet-Linear  & \textbf{0.4639} & \textbf{0.4399} \\
+Linear           & 0.4824 & 0.4478 \\
+CycleNet-Linear  & \textbf{0.4609} & \textbf{0.4371} \\
 MLP              & 0.4962 & 0.4552 \\
 CycleNet-MLP     & 0.4921 & 0.4523 \\
 \bottomrule

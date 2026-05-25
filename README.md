@@ -55,7 +55,7 @@ to replicate our reimplementation:
 
 1) you can download the dataset at this link provided by the authors: https://drive.google.com/file/d/1bNbw1y8VYp-8pkRTqbjoW-TA-G8T0EQf/view
 
-2) inside this repo create a folder named **paper_code** and clone the author's repository: https://github.com/ACAT-SCUT/CycleNet 
+2) inside this repo create a folder named **paper_code** and clone the author's repository inside that folder (e.g. ../paper_code/CycleNet): https://github.com/ACAT-SCUT/CycleNet 
 
 On terminal:
 
@@ -103,7 +103,7 @@ We tested whether CycleNet becomes more useful as the prediction horizon increas
 | -----------------: | --------------: | ----------------: | -----------------------: |
 |                 96 |        0.388711 |          0.377440 |                   ~2.90% |
 |                192 |        0.440288 |          0.424568 |                   ~3.57% |
-|                336 |        0.482197 |          0.462739 |                   ~4.04% |
+|                336 |        0.482383 |          0.460897 |                   ~4.45% |
 
 
 
@@ -116,7 +116,7 @@ We also tested different cycle lengths for `pred_len = 336`.
 | Cycle Length | Interpretation | CycleNet Test MSE | CycleNet Test MAE |
 | -----------: | -------------- | ----------------: | ----------------: |
 |           12 | half-day cycle |          0.474201 |          0.442331 |
-|           24 | daily cycle    |          0.462739 |          0.439170 |
+|           24 | daily cycle    |          0.460897 |          0.437092 |
 |           48 | two-day cycle  |          0.463609 |          0.439088 |
 |          168 | weekly cycle   |          0.479414 |          0.447642 |
 
@@ -132,8 +132,8 @@ In our reimplementation, CycleNet improves both Linear and MLP backbones, but th
 
 | Model           |     Test MSE |     Test MAE |
 | --------------- | -----------: | -----------: |
-| Linear          |     0.482642 |     0.446608 |
-| CycleNet-Linear | **0.461598** | **0.437861** |
+| Linear          |     0.482383 |     0.447817 |
+| CycleNet-Linear | **0.460897** | **0.437092** |
 | MLP             |     0.496212 |     0.455248 |
 | CycleNet-MLP    |     0.492152 |     0.452285 |
 
